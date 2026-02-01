@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lexicon Ledger | Vocabulary Trader</title>
+    <title>Lexicon Ledger | £2 Quest</title>
     <style>
         :root {
             --bg: #050505;
             --card: #111;
             --text: #ffffff;
-            --accent: #00ff41; /* Neo-Brutal Terminal Green */
+            --accent: #00ff41; 
             --error: #ff3e3e;
             --border: #262626;
             --warning: #facc15;
@@ -35,11 +35,108 @@
             letter-spacing: -0.02em;
         }
 
+        /* --- Lobby / Welcome Screen --- */
+        #lobby {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 5000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .lobby-title {
+            font-size: clamp(1.1rem, 5vw, 2.2rem);
+            font-weight: 900;
+            color: var(--accent);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            white-space: nowrap;
+            width: 100%;
+        }
+
+        .lobby-subtitle {
+            font-size: 0.95rem;
+            color: #fff;
+            margin-bottom: 25px;
+            font-weight: 400;
+            max-width: 500px;
+            line-height: 1.4;
+        }
+
+        .rules-card {
+            background: #000;
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 4px;
+            text-align: left;
+            width: 100%;
+            max-width: 440px;
+            margin-bottom: 25px;
+            display: none; 
+            min-height: 150px;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: var(--accent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rules-card.visible { display: block; }
+
+        #typewriter::after {
+            content: '█';
+            animation: blink 1s step-end infinite;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            from, to { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .pulse-btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 18px 30px;
+            font-size: 1.1rem;
+            font-weight: 900;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            text-transform: uppercase;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 255, 65, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0); }
+        }
+
+        .secondary-btn {
+            background: transparent;
+            color: var(--dim);
+            border: none;
+            margin-top: 15px;
+            font-size: 0.8rem;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
         /* --- Header Stats --- */
         #header {
-            padding: 12px 20px;
+            padding: 10px 20px;
             display: flex;
-            justify-space: space-between;
+            justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border);
             background: var(--surface);
@@ -63,14 +160,13 @@
             position: relative;
         }
 
-        /* Boxed Neon Instruction Tag */
         #mode-tag {
             font-size: 10px;
             background: #111;
             padding: 8px 16px;
             border: 1px solid var(--accent);
             border-radius: 4px;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             color: var(--accent);
             text-transform: uppercase;
             font-weight: 900;
@@ -86,28 +182,19 @@
             color: var(--warning);
             text-transform: uppercase;
             font-weight: 800;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             letter-spacing: 1px;
             display: none;
         }
 
-        .word-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
         #current-word {
-            font-size: 3rem;
+            font-size: clamp(2rem, 10vw, 3rem);
             font-weight: 900;
             text-align: center;
             text-transform: uppercase;
-            text-shadow: 0 0 25px rgba(255, 255, 255, 0.05);
-            line-height: 1;
+            margin-bottom: 20px;
         }
 
-        /* --- Input Grid --- */
         .option-grid {
             width: 100%;
             max-width: 480px;
@@ -125,19 +212,14 @@
             font-weight: 600;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.1s;
             text-align: center;
             text-transform: lowercase;
-            font-family: inherit;
         }
 
-        .option-btn:active {
-            transform: scale(0.97);
-            border-color: var(--accent);
-            background: #00ff4111;
-        }
+        .option-btn:active { transform: scale(0.97); border-color: var(--accent); background: #00ff4111; }
 
-        /* --- Intelligence Briefing (The Modal) --- */
+        /* --- Overlays --- */
         #briefing {
             position: fixed;
             bottom: -100%;
@@ -148,27 +230,14 @@
             padding: 20px 25px 30px 25px;
             transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 1000;
-            box-shadow: 0 -20px 50px rgba(0,0,0,0.8);
         }
 
         #briefing.active { bottom: 0; }
         #briefing h3 { color: var(--error); margin: 0 0 10px 0; font-size: 11px; letter-spacing: 3px; font-weight: 900; }
         #briefing p { font-size: 1.1rem; line-height: 1.4; color: #fff; margin-bottom: 20px; }
         
-        #briefing-btn {
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 14px;
-            width: 100%;
-            font-weight: 900;
-            font-size: 0.9rem;
-            border-radius: 4px;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
+        #briefing-btn { background: #fff; color: #000; border: none; padding: 14px; width: 100%; font-weight: 900; border-radius: 4px; text-transform: uppercase; }
 
-        /* --- Summary Overlays --- */
         #summary {
             display: none;
             position: fixed;
@@ -193,78 +262,75 @@
 </head>
 <body>
 
+    <!-- LOBBY SCREEN -->
+    <div id="lobby">
+        <div class="lobby-title">EARN £2 IN 2 MINUTES</div>
+        <div class="lobby-subtitle">24 Words. Test your vocabulary. Earn while you learn.</div>
+
+        <div id="rules-view" class="rules-card">
+            <div id="typewriter"></div>
+        </div>
+
+        <button class="pulse-btn" onclick="app.startMission()">Start Mission</button>
+        <button id="how-to-btn" class="secondary-btn" onclick="app.showRules()">How to Win</button>
+    </div>
+
     <div id="header">
         <div class="stat-block">
             <span class="stat-label">Wallet Balance</span>
             <div id="balance">£0.00</div>
         </div>
         <div class="stat-block" style="text-align: right;">
-            <span class="stat-label">Asset Pipeline</span>
+            <span class="stat-label">Levels</span>
             <div id="progress-count">1/24</div>
         </div>
     </div>
 
     <div id="viewport">
-        <!-- Replay Indicator (Only shown in re-trade) -->
         <div id="replay-indicator">RE-TRADING FAILED ASSET</div>
-
-        <!-- Neon Header Instruction -->
         <div id="mode-tag">Select word most similar in meaning</div>
-        
-        <div class="word-container">
-            <div id="current-word">INIT</div>
-        </div>
-        
-        <div class="option-grid" id="options-container">
-            <!-- Buttons dynamically generated -->
-        </div>
+        <div id="current-word">INIT</div>
+        <div class="option-grid" id="options-container"></div>
     </div>
 
-    <!-- The Intelligence Briefing Overlay -->
     <div id="briefing">
         <h3>SYSTEM OVERRIDE: DEFINITION ACQUIRED</h3>
-        <p id="briefing-content">Definition logic goes here.</p>
+        <p id="briefing-content"></p>
         <button id="briefing-btn" onclick="app.closeBriefing()">Resume Trading</button>
     </div>
 
-    <!-- Summary Screen -->
     <div id="summary">
         <div class="summary-header">ASSET REPORT</div>
         <div class="summary-stats" id="summary-data">Analysis complete. Ready for re-trade.</div>
-        <div class="btn-group" id="summary-actions">
-            <!-- Dynamic Actions -->
-        </div>
+        <div class="btn-group" id="summary-actions"></div>
     </div>
 
     <script>
         const MASTER_DATA = [
-            // PART 1: SIMILAR MEANING
-            { w: "REAL", opts: ["attitude", "stance", "charm", "authentic", "ideal"], ans: 3, def: "REAL and AUTHENTIC both mean something is genuine and actual." },
+            { w: "REAL", opts: ["attitude", "stance", "charm", "authentic", "ideal"], ans: 3, def: "REAL and AUTHENTIC both mean something is genuine." },
             { w: "OBLIGE", opts: ["obey", "figure", "respect", "compel", "sent"], ans: 3, def: "To OBLIGE is to COMPEL someone to act by duty or necessity." },
-            { w: "LAMENT", opts: ["mend", "lase", "revel", "wail", "destroy"], ans: 3, def: "To LAMENT or WAIL is to express deep sorrow or grief." },
-            { w: "ADHERE", opts: ["human", "bond", "here", "across", "appeal"], ans: 1, def: "To ADHERE is to stick firmly or create a BOND." },
-            { w: "HELIX", opts: ["spiral", "rebuke", "barbaric", "suitable", "trite"], ans: 0, def: "A HELIX is a 3D curve like a SPIRAL or screw thread." },
-            { w: "STROLL", opts: ["bogus", "icon", "saunter", "velocity", "cautious"], ans: 2, def: "To STROLL is to walk in a slow, relaxed way, or to SAUNTER." },
-            { w: "UNDERSTAND", opts: ["explain", "comprehend", "dislike", "disregard", "difficult"], ans: 1, def: "To UNDERSTAND or COMPREHEND is to fully grasp a meaning." },
-            { w: "IMPARTIAL", opts: ["serious", "unbiased", "witty", "pleased", "critical"], ans: 1, def: "Being IMPARTIAL means you are fair and UNBIASED." },
-            { w: "ORDERLY", opts: ["opinion", "formation", "associate", "arrangement", "controlled"], ans: 4, def: "An ORDERLY environment is well-organized and CONTROLLED." },
-            { w: "ERADICATE", opts: ["eliminate", "escape", "escort", "erratic", "erode"], ans: 0, def: "To ERADICATE is to destroy or ELIMINATE something completely." },
-            { w: "SABOTAGE", opts: ["disguise", "disgust", "dishonest", "discuss", "damage"], ans: 4, def: "To SABOTAGE something is to deliberately DAMAGE or destroy it." },
-            { w: "REVOLTING", opts: ["highlight", "hideous", "hilarious", "inflated", "obvious"], ans: 1, def: "REVOLTING and HIDEOUS describe things that are disgusting." },
-            
-            // PART 2: OPPOSITE MEANING
-            { w: "ALLY", opts: ["street", "allowance", "enemy", "friend", "modern"], ans: 2, mode: "ant", def: "The opposite of an ALLY (friend) is an ENEMY." },
-            { w: "SCATTER", opts: ["space", "collect", "vicious", "violent", "faulty"], ans: 1, mode: "ant", def: "The opposite of SCATTER (spread out) is to COLLECT." },
-            { w: "CALM", opts: ["soft", "tranquil", "nervous", "smooth", "quiet"], ans: 2, mode: "ant", def: "The opposite of being CALM is being NERVOUS." },
-            { w: "PERMIT", opts: ["care", "prohibit", "lost", "probate", "ticket"], ans: 1, mode: "ant", def: "The opposite of PERMIT (allow) is to PROHIBIT." },
-            { w: "ALERT", opts: ["active", "wise", "sage", "drowsy", "dopey"], ans: 3, mode: "ant", def: "The opposite of being ALERT (wide awake) is being DROWSY." },
-            { w: "GENEROUS", opts: ["rude", "cheerful", "stingy", "odd", "hate"], ans: 2, mode: "ant", def: "The opposite of being GENEROUS is being STINGY." },
-            { w: "GRACEFUL", opts: ["hopeful", "clumsy", "kind", "friendly", "bitter"], ans: 1, mode: "ant", def: "The opposite of being GRACEFUL is being CLUMSY." },
-            { w: "PERIPHERAL", opts: ["perpendicular", "marginal", "parallel", "limit", "central"], ans: 4, mode: "ant", def: "The opposite of PERIPHERAL (on the edge) is CENTRAL." },
-            { w: "POSSIBLE", opts: ["achievable", "unlikely", "feasible", "success", "augment"], ans: 1, mode: "ant", def: "The opposite of POSSIBLE is UNLIKELY." },
-            { w: "UNRAVEL", opts: ["tangle", "unwind", "resolve", "travel", "unfair"], ans: 0, mode: "ant", def: "The opposite of UNRAVEL (untie) is to TANGLE." },
-            { w: "STATIC", opts: ["engine", "fixed", "stable", "dynamic", "steady"], ans: 3, mode: "ant", def: "The opposite of STATIC (staying still) is DYNAMIC." },
-            { w: "STINGY", opts: ["strict", "waste", "sparse", "liberal", "attract"], ans: 3, mode: "ant", def: "The opposite of STINGY is LIBERAL (generous)." }
+            { w: "LAMENT", opts: ["mend", "lase", "revel", "wail", "destroy"], ans: 3, def: "To LAMENT or WAIL is to express deep sorrow." },
+            { w: "ADHERE", opts: ["human", "bond", "here", "across", "appeal"], ans: 1, def: "To ADHERE or BOND means to stick firmly." },
+            { w: "HELIX", opts: ["spiral", "rebuke", "barbaric", "suitable", "trite"], ans: 0, def: "A HELIX is a spiral curve." },
+            { w: "STROLL", opts: ["bogus", "icon", "saunter", "velocity", "cautious"], ans: 2, def: "A STROLL or SAUNTER is a relaxed walk." },
+            { w: "UNDERSTAND", opts: ["explain", "comprehend", "dislike", "disregard", "difficult"], ans: 1, def: "To UNDERSTAND is to COMPREHEND." },
+            { w: "IMPARTIAL", opts: ["serious", "unbiased", "witty", "pleased", "critical"], ans: 1, def: "IMPARTIAL and UNBIASED mean taking no sides." },
+            { w: "ORDERLY", opts: ["opinion", "formation", "associate", "arrangement", "controlled"], ans: 4, def: "ORDERLY means neat or CONTROLLED." },
+            { w: "ERADICATE", opts: ["eliminate", "escape", "escort", "erratic", "erode"], ans: 0, def: "To ERADICATE is to ELIMINATE completely." },
+            { w: "SABOTAGE", opts: ["disguise", "disgust", "dishonest", "discuss", "damage"], ans: 4, def: "To SABOTAGE is to deliberately DAMAGE." },
+            { w: "REVOLTING", opts: ["highlight", "hideous", "hilarious", "inflated", "obvious"], ans: 1, def: "REVOLTING and HIDEOUS mean disgusting." },
+            { w: "ALLY", opts: ["street", "allowance", "enemy", "friend", "modern"], ans: 2, mode: "ant", def: "Opposite of ALLY is ENEMY." },
+            { w: "SCATTER", opts: ["space", "collect", "vicious", "violent", "faulty"], ans: 1, mode: "ant", def: "Opposite of SCATTER is COLLECT." },
+            { w: "CALM", opts: ["soft", "tranquil", "nervous", "smooth", "quiet"], ans: 2, mode: "ant", def: "Opposite of CALM is NERVOUS." },
+            { w: "PERMIT", opts: ["care", "prohibit", "lost", "probate", "ticket"], ans: 1, mode: "ant", def: "Opposite of PERMIT is PROHIBIT." },
+            { w: "ALERT", opts: ["active", "wise", "sage", "drowsy", "dopey"], ans: 3, mode: "ant", def: "Opposite of ALERT is DROWSY." },
+            { w: "GENEROUS", opts: ["rude", "cheerful", "stingy", "odd", "hate"], ans: 2, mode: "ant", def: "Opposite of GENEROUS is STINGY." },
+            { w: "GRACEFUL", opts: ["hopeful", "clumsy", "kind", "friendly", "bitter"], ans: 1, mode: "ant", def: "Opposite of GRACEFUL is CLUMSY." },
+            { w: "PERIPHERAL", opts: ["perpendicular", "marginal", "parallel", "limit", "central"], ans: 4, mode: "ant", def: "Opposite of PERIPHERAL is CENTRAL." },
+            { w: "POSSIBLE", opts: ["achievable", "unlikely", "feasible", "success", "augment"], ans: 1, mode: "ant", def: "Opposite of POSSIBLE is UNLIKELY." },
+            { w: "UNRAVEL", opts: ["tangle", "unwind", "resolve", "travel", "unfair"], ans: 0, mode: "ant", def: "Opposite of UNRAVEL is TANGLE." },
+            { w: "STATIC", opts: ["engine", "fixed", "stable", "dynamic", "steady"], ans: 3, mode: "ant", def: "Opposite of STATIC is DYNAMIC." },
+            { w: "STINGY", opts: ["strict", "waste", "sparse", "liberal", "attract"], ans: 3, mode: "ant", def: "Opposite of STINGY is LIBERAL." }
         ];
 
         const app = {
@@ -275,74 +341,88 @@
             isReplay: false,
             stack: [],
             audioCtx: null,
+            isTyping: false,
 
             init() {
                 const syns = MASTER_DATA.filter(item => item.mode !== 'ant');
                 const ants = MASTER_DATA.filter(item => item.mode === 'ant');
                 this.stack = [...this.shuffle([...syns]), ...this.shuffle([...ants])];
-                this.render();
             },
 
-            shuffle(array) {
-                for (let i = array.length - 1; i > 0; i--) {
+            shuffle(arr) {
+                for (let i = arr.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
                 }
-                return array;
+                return arr;
             },
 
+            // Sound Effects Engine
             playCashSound() {
-                try {
-                    if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    const ctx = this.audioCtx;
-                    const osc1 = ctx.createOscillator();
-                    const gain1 = ctx.createGain();
-                    osc1.type = 'triangle';
-                    osc1.frequency.setValueAtTime(880, ctx.currentTime);
-                    osc1.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.05);
-                    gain1.gain.setValueAtTime(0.2, ctx.currentTime);
-                    gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-                    osc1.connect(gain1);
-                    gain1.connect(ctx.destination);
-                    osc1.start();
-                    osc1.stop(ctx.currentTime + 0.3);
-                    const osc2 = ctx.createOscillator();
-                    const gain2 = ctx.createGain();
-                    osc2.type = 'sine';
-                    osc2.frequency.setValueAtTime(1320, ctx.currentTime + 0.05);
-                    gain2.gain.setValueAtTime(0.1, ctx.currentTime + 0.05);
-                    gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-                    osc2.connect(gain2);
-                    gain2.connect(ctx.destination);
-                    osc2.start(ctx.currentTime + 0.05);
-                    osc2.stop(ctx.currentTime + 0.4);
-                } catch(e) {}
+                if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const ctx = this.audioCtx;
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.frequency.setValueAtTime(880, now);
+                osc.frequency.exponentialRampToValueAtTime(1760, now + 0.05);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(); osc.stop(now + 0.3);
             },
 
             playErrorSound() {
-                try {
-                    if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    const ctx = this.audioCtx;
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(220, ctx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(55, ctx.currentTime + 0.5);
-                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.start();
-                    osc.stop(ctx.currentTime + 0.5);
-                } catch(e) {}
+                if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const ctx = this.audioCtx;
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(55, now + 0.5);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(); osc.stop(now + 0.5);
+            },
+
+            async showRules() {
+                if (this.isTyping) return;
+                this.isTyping = true;
+                document.getElementById('rules-view').classList.add('visible');
+                document.getElementById('how-to-btn').style.display = 'none';
+
+                const lines = [
+                    "> THE MISSION: Blast through 24 words from your test.",
+                    "> THE PAYDAY: Every right answer drops £0.08 into your wallet. Cha-ching.",
+                    "> THE INTEL: If you get one wrong, read the Briefing to level up.",
+                    "> BONUS ROUND: Missed words aren't gone forever. Re-play them for extra cash.",
+                    "> Now lets go and earn the 2 pounds!"
+                ];
+
+                const typewriterEl = document.getElementById('typewriter');
+                typewriterEl.innerHTML = "";
+                for (let line of lines) {
+                    const lineEl = document.createElement('div');
+                    lineEl.style.marginBottom = "8px";
+                    typewriterEl.appendChild(lineEl);
+                    for (let char of line) {
+                        lineEl.textContent += char;
+                        await new Promise(r => setTimeout(r, 20));
+                    }
+                }
+                this.isTyping = false;
+            },
+
+            startMission() {
+                // Initialize audio context on first user interaction
+                if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                document.getElementById('lobby').style.display = 'none';
+                this.render();
             },
 
             render() {
-                if (this.currentIndex >= this.stack.length) {
-                    this.showSummary();
-                    return;
-                }
-
+                if (this.currentIndex >= this.stack.length) { this.showSummary(); return; }
                 const item = this.stack[this.currentIndex];
                 const modeTag = document.getElementById('mode-tag');
                 const replayTag = document.getElementById('replay-indicator');
@@ -350,26 +430,16 @@
                 const similarText = "Select word most similar in meaning";
                 const oppositeText = "Select word most opposite in meaning";
 
-                if (this.isReplay) {
-                    replayTag.style.display = 'block';
-                    modeTag.innerText = item.mode === "ant" ? oppositeText : similarText;
-                    modeTag.style.color = "var(--warning)";
-                    modeTag.style.borderColor = "var(--warning)";
-                    modeTag.style.boxShadow = "0 0 15px rgba(250, 204, 21, 0.1)";
-                } else {
-                    replayTag.style.display = 'none';
-                    modeTag.innerText = item.mode === "ant" ? oppositeText : similarText;
-                    modeTag.style.color = item.mode === "ant" ? "#ff8800" : "var(--accent)";
-                    modeTag.style.borderColor = item.mode === "ant" ? "#ff8800" : "var(--accent)";
-                    modeTag.style.boxShadow = item.mode === "ant" ? "0 0 15px rgba(255, 136, 0, 0.1)" : "0 0 15px rgba(0, 255, 65, 0.1)";
-                }
+                replayTag.style.display = this.isReplay ? 'block' : 'none';
+                modeTag.innerText = item.mode === "ant" ? oppositeText : similarText;
+                modeTag.style.color = this.isReplay ? "var(--warning)" : (item.mode === "ant" ? "#ff8800" : "var(--accent)");
+                modeTag.style.borderColor = modeTag.style.color;
 
                 document.getElementById('progress-count').innerText = `${this.currentIndex + 1}/${this.stack.length}`;
                 document.getElementById('current-word').innerText = item.w;
 
                 const container = document.getElementById('options-container');
                 container.innerHTML = '';
-
                 item.opts.forEach((opt, idx) => {
                     const btn = document.createElement('button');
                     btn.className = 'option-btn';
@@ -379,42 +449,29 @@
                 });
             },
 
-            updateWallet() {
-                const balEl = document.getElementById('balance');
-                balEl.innerText = `£${this.totalBalance.toFixed(2)}`;
-                balEl.classList.remove('bump');
-                void balEl.offsetWidth; 
-                balEl.classList.add('bump');
-                setTimeout(() => balEl.classList.remove('bump'), 200);
-            },
-
             check(idx) {
                 const item = this.stack[this.currentIndex];
                 if (idx === item.ans) {
-                    const baseReward = 2.00 / 24;
-                    if (!this.isReplay) {
-                        this.correctCount++;
-                        this.totalBalance += baseReward;
-                    } else {
-                        // Re-trade reward is half (1.00 / 24)
-                        this.totalBalance += (baseReward * 0.5);
-                    }
+                    const base = 2.00 / 24;
+                    this.totalBalance += this.isReplay ? (base * 0.5) : base;
+                    if (!this.isReplay) this.correctCount++;
                     this.updateWallet();
                     this.playCashSound();
                     this.currentIndex++;
                     this.render();
                 } else {
-                    if (!this.isReplay) {
-                        this.missedAssets.push(item);
-                    }
+                    if (!this.isReplay) this.missedAssets.push(item);
                     this.playErrorSound();
-                    this.openBriefing(item.def);
+                    document.getElementById('briefing-content').innerText = item.def;
+                    document.getElementById('briefing').classList.add('active');
                 }
             },
 
-            openBriefing(text) {
-                document.getElementById('briefing-content').innerText = text;
-                document.getElementById('briefing').classList.add('active');
+            updateWallet() {
+                const el = document.getElementById('balance');
+                el.innerText = `£${this.totalBalance.toFixed(2)}`;
+                el.classList.add('bump');
+                setTimeout(() => el.classList.remove('bump'), 200);
             },
 
             closeBriefing() {
@@ -429,33 +486,26 @@
                 const actions = document.getElementById('summary-actions');
                 modal.style.display = 'flex';
                 actions.innerHTML = '';
-
-                // Final rounding to exactly £2.00 only if perfect score originally
-                if (!this.isReplay && this.correctCount === 24) this.totalBalance = 2.00;
                 this.updateWallet();
 
-                let report = `Total Capital Earned: £${this.totalBalance.toFixed(2)}\n`;
-                if (!this.isReplay) {
-                    report += `Portfolio Accuracy: ${Math.round((this.correctCount / 24) * 100)}%\n\n`;
-                } else {
-                    report += `Re-trade Session Complete.\n\n`;
-                }
-
+                let report = `Loot Collected: £${this.totalBalance.toFixed(2)}\n`;
                 if (!this.isReplay && this.missedAssets.length > 0) {
-                    report += `Warning: ${this.missedAssets.length} assets require re-trading to recover partial capital.`;
-                    const retryBtn = document.createElement('button');
-                    retryBtn.className = 'btn-primary';
-                    retryBtn.style.background = 'var(--warning)';
-                    retryBtn.innerText = `Quick Re-Trade (${this.missedAssets.length} Words)`;
-                    retryBtn.onclick = () => this.startReplay();
-                    actions.appendChild(retryBtn);
+                    report += `⚠️ ${this.missedAssets.length} Levels Flapped. Re-play for 50% Respawn Cash?`;
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-primary';
+                    btn.style.background = 'var(--warning)';
+                    btn.innerText = `RE-TRADE (${this.missedAssets.length} WORDS)`;
+                    btn.onclick = () => this.startReplay();
+                    actions.appendChild(btn);
+                } else {
+                    report += `Quest Finalized. Brain Maxed.`;
                 }
 
-                const restartBtn = document.createElement('button');
-                restartBtn.className = 'btn-secondary';
-                restartBtn.innerText = "New Full Session";
-                restartBtn.onclick = () => location.reload();
-                actions.appendChild(restartBtn);
+                const restart = document.createElement('button');
+                restart.className = 'btn-secondary';
+                restart.innerText = "New Quest";
+                restart.onclick = () => location.reload();
+                actions.appendChild(restart);
                 stats.innerText = report;
             },
 
